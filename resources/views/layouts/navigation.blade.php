@@ -15,6 +15,17 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('user.projects.index')" :active="request()->routeIs('user.projects.*')">
+                        {{ __('Proyectos') }}
+                    </x-nav-link>
+                    @if (Auth::user() && Auth::user()->is_admin)
+                        <x-nav-link :href="route('admin.projects.index')" :active="request()->routeIs('admin.projects.*')">
+                            {{ __('Admin Proyectos') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.tickets.index')" :active="request()->routeIs('admin.tickets.*')">
+                            {{ __('Admin Tickets') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +81,14 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('user.projects.index')" :active="request()->routeIs('user.projects.*')">
+                {{ __('Mis Proyectos') }}
+            </x-responsive-nav-link>
+            @if (Auth::user() && Auth::user()->is_admin)
+                <x-responsive-nav-link :href="route('admin.projects.index')" :active="request()->routeIs('admin.projects.*')">
+                    {{ __('Admin Proyectos') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

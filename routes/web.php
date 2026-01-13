@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
+use App\Http\Controllers\User\ProjectController as UserProjectController;
+use App\Http\Controllers\User\TicketController as UserTicketController;
+use App\Http\Controllers\Admin\TicketController as AdminTicketController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,3 +22,29 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Admin - Proyectos
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('projects', [AdminProjectController::class, 'index'])->name('projects.index');
+    Route::get('projects/create', [AdminProjectController::class, 'create'])->name('projects.create');
+    Route::post('projects', [AdminProjectController::class, 'store'])->name('projects.store');
+});
+
+// Usuario - Proyectos (solo ver)
+Route::middleware(['auth'])->prefix('projects')->name('user.projects.')->group(function () {
+    Route::get('/', [UserProjectController::class, 'index'])->name('index');
+    Route::get('/{project}', [UserProjectController::class, 'show'])->name('show');
+
+    // Tickets del usuario por proyecto
+    Route::get('/{project}/tickets/create', [UserTicketController::class, 'create'])->name('tickets.create');
+    Route::post('/{project}/tickets', [UserTicketController::class, 'store'])->name('tickets.store');
+    Route::get('/{project}/tickets/{ticket}', [UserTicketController::class, 'show'])->name('tickets.show');
+});
+
+// Admin - Tickets gestión (asignar, listar)
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('tickets', [AdminTicketController::class, 'index'])->name('tickets.index');
+    Route::get('tickets/{ticket}', [AdminTicketController::class, 'show'])->name('tickets.show');
+    Route::get('tickets/{ticket}/edit', [AdminTicketController::class, 'edit'])->name('tickets.edit');
+    Route::patch('tickets/{ticket}', [AdminTicketController::class, 'update'])->name('tickets.update');
+});
