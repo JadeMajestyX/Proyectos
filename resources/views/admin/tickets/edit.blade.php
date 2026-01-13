@@ -33,7 +33,7 @@
                         <x-input-error :messages="$errors->get('assigned_to')" class="mt-2" />
                     </div>
 
-                    <div class="mt-4 grid grid-cols-2 gap-4">
+                    <div class="mt-4 grid grid-cols-3 gap-4">
                         <div>
                             <x-input-label for="status" :value="__('Estado')" />
                             <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300">
@@ -42,6 +42,18 @@
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('status')" class="mt-2" />
+                        </div>
+                        <div>
+                            <x-input-label for="category" :value="__('Categoría')" />
+                            <select id="category" name="category" class="mt-1 block w-full rounded-md border-gray-300">
+                                @php($cat = $ticket->category ?? 'bug')
+                                <option value="bug" @selected($cat==='bug')>Bug</option>
+                                <option value="actualizacion" @selected($cat==='actualizacion')>Actualización</option>
+                                <option value="novedad" @selected($cat==='novedad')>Novedad</option>
+                                <option value="mejora" @selected($cat==='mejora')>Mejora</option>
+                                <option value="otro" @selected($cat==='otro')>Otro</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('category')" class="mt-2" />
                         </div>
                         <div>
                             <x-input-label for="priority" :value="__('Prioridad')" />

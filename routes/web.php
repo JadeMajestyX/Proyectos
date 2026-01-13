@@ -57,6 +57,9 @@ Route::middleware(['auth'])->prefix('projects')->name('user.projects.')->group(f
     Route::get('/{project}/tickets/create', [UserTicketController::class, 'create'])->name('tickets.create');
     Route::post('/{project}/tickets', [UserTicketController::class, 'store'])->name('tickets.store');
     Route::get('/{project}/tickets/{ticket}', [UserTicketController::class, 'show'])->name('tickets.show');
+    Route::get('/{project}/tickets/{ticket}/edit', [UserTicketController::class, 'edit'])->name('tickets.edit');
+    Route::patch('/{project}/tickets/{ticket}', [UserTicketController::class, 'update'])->name('tickets.update');
+    Route::delete('/{project}/tickets/{ticket}', [UserTicketController::class, 'destroy'])->name('tickets.destroy');
 });
 
 // Admin - Tickets gestión (asignar, listar)
@@ -65,4 +68,5 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('tickets/{ticket}', [AdminTicketController::class, 'show'])->name('tickets.show');
     Route::get('tickets/{ticket}/edit', [AdminTicketController::class, 'edit'])->name('tickets.edit');
     Route::patch('tickets/{ticket}', [AdminTicketController::class, 'update'])->name('tickets.update');
+    Route::delete('tickets/{ticket}', [AdminTicketController::class, 'destroy'])->name('tickets.destroy');
 });

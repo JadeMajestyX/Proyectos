@@ -24,6 +24,19 @@
                     </div>
 
                     <div class="mt-4">
+                        <x-input-label for="category" :value="__('Categoría')" />
+                        <select id="category" name="category" class="mt-1 block w-full rounded-md border-gray-300">
+                            @php($catOld = old('category','bug'))
+                            <option value="bug" @selected($catOld==='bug')>Bug</option>
+                            <option value="actualizacion" @selected($catOld==='actualizacion')>Actualización</option>
+                            <option value="novedad" @selected($catOld==='novedad')>Novedad</option>
+                            <option value="mejora" @selected($catOld==='mejora')>Mejora</option>
+                            <option value="otro" @selected($catOld==='otro')>Otro</option>
+                        </select>
+                        <x-input-error :messages="$errors->get('category')" class="mt-2" />
+                    </div>
+
+                    <div class="mt-4">
                         <x-input-label for="priority" :value="__('Prioridad')" />
                         <select id="priority" name="priority" class="mt-1 block w-full rounded-md border-gray-300">
                             <option value="low" @selected(old('priority')==='low')>Baja</option>
@@ -34,9 +47,10 @@
                     </div>
 
                     <div class="mt-4">
-                        <x-input-label for="image" :value="__('Imagen (opcional)')" />
-                        <input id="image" name="image" type="file" accept="image/*" class="mt-1 block w-full" />
-                        <x-input-error :messages="$errors->get('image')" class="mt-2" />
+                        <x-input-label for="media" :value="__('Imágenes/Vídeos (opcional, múltiple)')" />
+                        <input id="media" name="media[]" type="file" accept="image/*,video/*" class="mt-1 block w-full" multiple />
+                        <x-input-error :messages="$errors->get('media')" class="mt-2" />
+                        <x-input-error :messages="collect($errors->get('media.*'))->flatten()->all()" class="mt-2" />
                     </div>
 
                     <div class="mt-6 flex justify-end">

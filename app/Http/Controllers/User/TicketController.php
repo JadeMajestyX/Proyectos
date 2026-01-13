@@ -5,8 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Ticket;
+use App\Models\TicketMedia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TicketController extends Controller
 {
@@ -27,25 +29,39 @@ class TicketController extends Controller
         $validated = $request->validate([
             'title' => ['required','string','max:255'],
             'description' => ['nullable','string'],
+            'category' => ['required','in:bug,actualizacion,novedad,mejora,otro'],
             'priority' => ['required','in:low,medium,high'],
-            'image' => ['nullable','image','max:2048']
+            'media' => ['nullable','array'],
+            'media.*' => ['file','mimes:jpg,jpeg,png,gif,webp,mp4,webm,ogg,mov','max:20480'] // 20MB por archivo
         ]);
 
-        $path = null;
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('tickets', 'public');
-        }
-
-        Ticket::create([
+        $ticket = Ticket::create([
             'project_id' => $project->id,
             'created_by' => Auth::id(),
             'assigned_to' => null,
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'status' => 'open',
+            'category' => $validated['category'],
             'priority' => $validated['priority'],
-            'image_path' => $path,
+            'image_path' => null,
         ]);
+
+        if ($request->hasFile('media')) {
+            foreach ($request->file('media') as $file) {
+                $stored = $file->store('tickets', 'public');
+                $mime = $file->getClientMimeType();
+                $type = str_starts_with($mime, 'video') ? 'video' : 'image';
+                TicketMedia::create([
+                    'ticket_id' => $ticket->id,
+                    'path' => $stored,
+                    'type' => $type,
+                    'mime' => $mime,
+                    'original_name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                ]);
+            }
+        }
 
         return redirect()->route('user.projects.show', $project)->with('status', 'Ticket creado');
     }
@@ -55,8 +71,74 @@ class TicketController extends Controller
         abort_unless($project->owner && $project->owner->is_admin, 404);
         abort_unless($ticket->project_id === $project->id, 404);
 
-        $ticket->load(['project','creator','assignee']);
+        $ticket->load(['project','creator','assignee','media']);
 
         return view('user.tickets.show', compact('project','ticket'));
+    }
+
+    public function edit(Project $project, Ticket $ticket)
+    {
+        abort_unless($project->owner && $project->owner->is_admin, 404);
+        abort_unless($ticket->project_id === $project->id, 404);
+        abort_unless($ticket->created_by === Auth::id(), 403);
+        return view('user.tickets.edit', compact('project','ticket'));
+    }
+
+    public function update(Request $request, Project $project, Ticket $ticket)
+    {
+        abort_unless($project->owner && $project->owner->is_admin, 404);
+        abort_unless($ticket->project_id === $project->id, 404);
+        abort_unless($ticket->created_by === Auth::id(), 403);
+        $validated = $request->validate([
+            'title' => ['required','string','max:255'],
+            'description' => ['nullable','string'],
+            'category' => ['required','in:bug,actualizacion,novedad,mejora,otro'],
+            'priority' => ['required','in:low,medium,high'],
+            'media' => ['nullable','array'],
+            'media.*' => ['file','mimes:jpg,jpeg,png,gif,webp,mp4,webm,ogg,mov','max:20480']
+        ]);
+
+        $ticket->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+            'category' => $validated['category'],
+            'priority' => $validated['priority'],
+        ]);
+
+        if ($request->hasFile('media')) {
+            foreach ($request->file('media') as $file) {
+                $stored = $file->store('tickets', 'public');
+                $mime = $file->getClientMimeType();
+                $type = str_starts_with($mime, 'video') ? 'video' : 'image';
+                TicketMedia::create([
+                    'ticket_id' => $ticket->id,
+                    'path' => $stored,
+                    'type' => $type,
+                    'mime' => $mime,
+                    'original_name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                ]);
+            }
+        }
+
+        return redirect()->route('user.projects.tickets.show', [$project, $ticket])->with('status','Ticket actualizado');
+    }
+
+    public function destroy(Project $project, Ticket $ticket)
+    {
+        abort_unless($project->owner && $project->owner->is_admin, 404);
+        abort_unless($ticket->project_id === $project->id, 404);
+        abort_unless($ticket->created_by === Auth::id(), 403);
+
+        $ticket->load('media');
+        foreach ($ticket->media as $m) {
+            Storage::disk('public')->delete($m->path);
+        }
+        if ($ticket->image_path) {
+            Storage::disk('public')->delete($ticket->image_path);
+        }
+        $ticket->delete();
+
+        return redirect()->route('user.projects.show', $project)->with('status','Ticket eliminado');
     }
 }

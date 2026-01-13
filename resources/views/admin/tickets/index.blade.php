@@ -32,6 +32,9 @@
                                             'bg-amber-100 text-amber-700' => $ticket->priority==='medium',
         									'bg-green-100 text-green-700' => $ticket->priority==='low',
                                         ])>{{ ucfirst($ticket->priority) }}</span>
+                                        @if($ticket->category)
+                                            <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">{{ ucfirst($ticket->category) }}</span>
+                                        @endif
                                         <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{{ str_replace('_',' ', ucfirst($ticket->status)) }}</span>
                                     </div>
                                     <div class="text-sm text-gray-600 dark:text-gray-300">Proyecto: {{ $ticket->project->name }} — Creador: {{ $ticket->creator->name }}</div>
@@ -39,9 +42,14 @@
                                         <div class="text-xs text-gray-500 dark:text-gray-400">Asignado a: {{ $ticket->assignee->name }}</div>
                                     @endif
                                 </div>
-                                <div class="space-x-3">
+                                <div class="space-x-3 flex items-center">
                                     <a href="{{ route('admin.tickets.show', $ticket) }}" class="text-gray-700 hover:underline text-sm">Ver</a>
                                     <a href="{{ route('admin.tickets.edit', $ticket) }}" class="text-indigo-600 hover:underline text-sm">Asignar / Editar</a>
+                                    <form method="POST" action="{{ route('admin.tickets.destroy', $ticket) }}" onsubmit="return confirm('¿Eliminar este ticket?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:underline text-sm">Eliminar</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

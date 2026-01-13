@@ -37,6 +37,9 @@
                                                 'bg-amber-100 text-amber-700' => $ticket->priority==='medium',
                                                 'bg-green-100 text-green-700' => $ticket->priority==='low',
                                             ])>{{ ucfirst($ticket->priority) }}</span>
+                                            @if($ticket->category)
+                                                <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">{{ ucfirst($ticket->category) }}</span>
+                                            @endif
                                             <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{{ str_replace('_',' ', ucfirst($ticket->status)) }}</span>
                                         </div>
                                         <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Proyecto: {{ $ticket->project->name }} — {{ $ticket->created_at->diffForHumans() }}</div>
@@ -69,6 +72,9 @@
                                                 'bg-amber-100 text-amber-700' => $ticket->priority==='medium',
                                                 'bg-green-100 text-green-700' => $ticket->priority==='low',
                                             ])>{{ ucfirst($ticket->priority) }}</span>
+                                            @if($ticket->category)
+                                                <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">{{ ucfirst($ticket->category) }}</span>
+                                            @endif
                                             <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{{ str_replace('_',' ', ucfirst($ticket->status)) }}</span>
                                         </div>
                                         <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Proyecto: {{ $ticket->project->name }} — {{ $ticket->created_at->diffForHumans() }}</div>

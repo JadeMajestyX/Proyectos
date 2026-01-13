@@ -7,6 +7,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TicketController extends Controller
 {
@@ -38,7 +39,8 @@ class TicketController extends Controller
         $validated = $request->validate([
             'assigned_to' => ['nullable','exists:users,id'],
             'status' => ['required','in:open,in_progress,done'],
-            'priority' => ['required','in:low,medium,high']
+            'priority' => ['required','in:low,medium,high'],
+            'category' => ['required','in:bug,actualizacion,novedad,mejora,otro']
         ]);
 
         $ticket->update($validated);
@@ -49,7 +51,21 @@ class TicketController extends Controller
     public function show(Ticket $ticket)
     {
         abort_unless(Auth::user() && Auth::user()->is_admin, 403);
-        $ticket->load(['project','creator','assignee']);
+        $ticket->load(['project','creator','assignee','media']);
         return view('admin.tickets.show', compact('ticket'));
+    }
+
+    public function destroy(Ticket $ticket)
+    {
+        abort_unless(Auth::user() && Auth::user()->is_admin, 403);
+        $ticket->load('media');
+        foreach ($ticket->media as $m) {
+            Storage::disk('public')->delete($m->path);
+        }
+        if ($ticket->image_path) {
+            Storage::disk('public')->delete($ticket->image_path);
+        }
+        $ticket->delete();
+        return redirect()->route('admin.tickets.index')->with('status','Ticket eliminado');
     }
 }
