@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\User\ProjectController as UserProjectController;
 use App\Http\Controllers\User\TicketController as UserTicketController;
 use App\Http\Controllers\Admin\TicketController as AdminTicketController;
+use App\Models\Ticket;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,7 +14,23 @@ Route::get('/', function () {
 })->middleware('guest')->name('home');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = Auth::user();
+
+    $assigned = Ticket::with(['project','creator','assignee'])
+        ->where('assigned_to', $user->id)
+        ->orderByRaw("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END")
+        ->orderByDesc('created_at')
+        ->limit(10)
+        ->get();
+
+    $created = Ticket::with(['project','creator','assignee'])
+        ->where('created_by', $user->id)
+        ->orderByRaw("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END")
+        ->orderByDesc('created_at')
+        ->limit(10)
+        ->get();
+
+    return view('dashboard', compact('assigned','created'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

@@ -30,8 +30,10 @@
         <script>
             (function(){
                 const pref = localStorage.getItem('theme');
-                if (pref === 'dark' || (!pref && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                if (pref === 'dark') {
                     document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
                 }
                 window.toggleTheme = function(){
                     const isDark = document.documentElement.classList.toggle('dark');
