@@ -35,9 +35,9 @@
                         @foreach($ticket->media as $m)
                             <div class="border rounded p-2">
                                 @if($m->type==='image')
-                                    <img src="{{ asset('storage/'.$m->path) }}" alt="media" class="w-full max-h-80 object-contain rounded" />
+                                    <img src="{{ asset(str_starts_with($m->path,'tickets/') ? $m->path : 'storage/'.$m->path) }}" alt="media" class="w-full max-h-80 object-contain rounded" />
                                 @else
-                                    <video src="{{ asset('storage/'.$m->path) }}" controls class="w-full max-h-80 rounded"></video>
+                                    <video src="{{ asset(str_starts_with($m->path,'tickets/') ? $m->path : 'storage/'.$m->path) }}" controls class="w-full max-h-80 rounded"></video>
                                 @endif
                                 <div class="mt-1 text-xs text-gray-500 truncate">{{ $m->original_name }}</div>
                             </div>
@@ -45,7 +45,7 @@
                     </div>
                 @elseif($ticket->image_path)
                     <div class="mt-6">
-                        <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="Imagen del ticket" class="w-full max-h-[480px] object-contain rounded border" />
+                        <img src="{{ asset(str_starts_with($ticket->image_path,'tickets/') ? $ticket->image_path : 'storage/'.$ticket->image_path) }}" alt="Imagen del ticket" class="w-full max-h-[480px] object-contain rounded border" />
                     </div>
                 @endif
 

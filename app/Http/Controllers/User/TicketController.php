@@ -9,6 +9,7 @@ use App\Models\TicketMedia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -48,13 +49,16 @@ class TicketController extends Controller
         ]);
 
         if ($request->hasFile('media')) {
+            $dir = public_path('tickets');
+            if (!is_dir($dir)) @mkdir($dir, 0755, true);
             foreach ($request->file('media') as $file) {
-                $stored = $file->store('tickets', 'public');
+                $filename = $file->hashName();
+                $file->move($dir, $filename);
                 $mime = $file->getClientMimeType();
                 $type = str_starts_with($mime, 'video') ? 'video' : 'image';
                 TicketMedia::create([
                     'ticket_id' => $ticket->id,
-                    'path' => $stored,
+                    'path' => 'tickets/'.$filename,
                     'type' => $type,
                     'mime' => $mime,
                     'original_name' => $file->getClientOriginalName(),
@@ -106,13 +110,16 @@ class TicketController extends Controller
         ]);
 
         if ($request->hasFile('media')) {
+            $dir = public_path('tickets');
+            if (!is_dir($dir)) @mkdir($dir, 0755, true);
             foreach ($request->file('media') as $file) {
-                $stored = $file->store('tickets', 'public');
+                $filename = $file->hashName();
+                $file->move($dir, $filename);
                 $mime = $file->getClientMimeType();
                 $type = str_starts_with($mime, 'video') ? 'video' : 'image';
                 TicketMedia::create([
                     'ticket_id' => $ticket->id,
-                    'path' => $stored,
+                    'path' => 'tickets/'.$filename,
                     'type' => $type,
                     'mime' => $mime,
                     'original_name' => $file->getClientOriginalName(),
@@ -132,10 +139,18 @@ class TicketController extends Controller
 
         $ticket->load('media');
         foreach ($ticket->media as $m) {
-            Storage::disk('public')->delete($m->path);
+            if (Storage::disk('public')->exists($m->path)) {
+                Storage::disk('public')->delete($m->path);
+            }
+            $pub = public_path($m->path);
+            if (is_file($pub)) @unlink($pub);
         }
         if ($ticket->image_path) {
-            Storage::disk('public')->delete($ticket->image_path);
+            if (Storage::disk('public')->exists($ticket->image_path)) {
+                Storage::disk('public')->delete($ticket->image_path);
+            }
+            $pub = public_path($ticket->image_path);
+            if (is_file($pub)) @unlink($pub);
         }
         $ticket->delete();
 

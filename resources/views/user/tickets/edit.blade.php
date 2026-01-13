@@ -62,16 +62,16 @@
                                 @foreach($ticket->media as $m)
                                     <div class="border rounded p-2">
                                         @if($m->type==='image')
-                                            <img src="{{ asset('storage/'.$m->path) }}" alt="media" class="w-full h-40 object-cover rounded" />
+                                            <img src="{{ asset(str_starts_with($m->path,'tickets/') ? $m->path : 'storage/'.$m->path) }}" alt="media" class="w-full h-40 object-cover rounded" />
                                         @else
-                                            <video src="{{ asset('storage/'.$m->path) }}" controls class="w-full h-40 rounded"></video>
+                                            <video src="{{ asset(str_starts_with($m->path,'tickets/') ? $m->path : 'storage/'.$m->path) }}" controls class="w-full h-40 rounded"></video>
                                         @endif
                                         <div class="mt-1 text-xs text-gray-500 truncate">{{ $m->original_name }}</div>
                                     </div>
                                 @endforeach
                                 @if($ticket->image_path)
                                     <div class="border rounded p-2">
-                                        <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="imagen" class="w-full h-40 object-cover rounded" />
+                                        <img src="{{ asset(str_starts_with($ticket->image_path,'tickets/') ? $ticket->image_path : 'storage/'.$ticket->image_path) }}" alt="imagen" class="w-full h-40 object-cover rounded" />
                                         <div class="mt-1 text-xs text-gray-500 truncate">Imagen legacy</div>
                                     </div>
                                 @endif

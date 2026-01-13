@@ -13,7 +13,7 @@
                     <div class="text-sm text-gray-600">Proyecto: {{ $ticket->project->name }} | Creador: {{ $ticket->creator->name }}</div>
                     @if($ticket->image_path)
                         <div class="mt-3">
-                            <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="Imagen del ticket" class="max-h-64 rounded border"/>
+                            <img src="{{ asset(str_starts_with($ticket->image_path,'tickets/') ? $ticket->image_path : 'storage/'.$ticket->image_path) }}" alt="Imagen del ticket" class="max-h-64 rounded border"/>
                         </div>
                     @endif
                 </div>
