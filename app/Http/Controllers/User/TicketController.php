@@ -49,7 +49,7 @@ class TicketController extends Controller
 
         if ($request->hasFile('media')) {
             foreach ($request->file('media') as $file) {
-                $stored = $file->store('tickets', 'public');
+                $stored = $file->store('tickets', 'public_storage');
                 $mime = $file->getClientMimeType();
                 $type = str_starts_with($mime, 'video') ? 'video' : 'image';
                 TicketMedia::create([
@@ -107,7 +107,7 @@ class TicketController extends Controller
 
         if ($request->hasFile('media')) {
             foreach ($request->file('media') as $file) {
-                $stored = $file->store('tickets', 'public');
+                $stored = $file->store('tickets', 'public_storage');
                 $mime = $file->getClientMimeType();
                 $type = str_starts_with($mime, 'video') ? 'video' : 'image';
                 TicketMedia::create([
@@ -132,9 +132,11 @@ class TicketController extends Controller
 
         $ticket->load('media');
         foreach ($ticket->media as $m) {
-            Storage::disk('public')->delete($m->path);
+            Storage::disk('public_storage')->delete($m->path);
+            Storage::disk('public')->delete($m->path); // fallback legacy
         }
         if ($ticket->image_path) {
+            Storage::disk('public_storage')->delete($ticket->image_path);
             Storage::disk('public')->delete($ticket->image_path);
         }
         $ticket->delete();

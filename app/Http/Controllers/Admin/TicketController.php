@@ -60,9 +60,11 @@ class TicketController extends Controller
         abort_unless(Auth::user() && Auth::user()->is_admin, 403);
         $ticket->load('media');
         foreach ($ticket->media as $m) {
-            Storage::disk('public')->delete($m->path);
+            Storage::disk('public_storage')->delete($m->path);
+            Storage::disk('public')->delete($m->path); // fallback legacy
         }
         if ($ticket->image_path) {
+            Storage::disk('public_storage')->delete($ticket->image_path);
             Storage::disk('public')->delete($ticket->image_path);
         }
         $ticket->delete();
