@@ -11,6 +11,9 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <!-- Bootstrap CSS (solo para modal) -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -32,16 +35,19 @@
                 {{ $slot }}
             </main>
         </div>
-        <!-- Image Preview Modal -->
-        <div id="imageModal" class="fixed inset-0 z-50 hidden">
-            <div class="absolute inset-0 bg-black/80" data-modal-close></div>
-            <div class="relative w-full h-full flex items-center justify-center p-4">
-                <img id="imageModalImg" src="" alt="preview" class="max-h-[90vh] max-w-[95vw] rounded shadow-lg" />
-                <button type="button" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-2" title="Cerrar" data-modal-close>
-                    ✕
-                </button>
+        <!-- Bootstrap Image Preview Modal -->
+        <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-body p-0 d-flex justify-content-center">
+                        <img id="imagePreviewModalImg" src="" alt="preview" class="img-fluid rounded" style="max-height:80vh;"/>
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script>
             (function(){
                 const pref = localStorage.getItem('theme');
@@ -61,34 +67,22 @@
                         window.location.href = url;
                     }
                 }
-
-                // Simple Image Preview Modal
-                const modal = document.getElementById('imageModal');
-                const modalImg = document.getElementById('imageModalImg');
-                function openModal(src){
-                    modalImg.src = src;
-                    modal.classList.remove('hidden');
-                    document.body.classList.add('overflow-hidden');
-                }
-                function closeModal(){
-                    modal.classList.add('hidden');
-                    modalImg.src = '';
-                    document.body.classList.remove('overflow-hidden');
+                // Bootstrap Image Preview Modal
+                const modalEl = document.getElementById('imagePreviewModal');
+                const modalImg = document.getElementById('imagePreviewModalImg');
+                let bsModal = null;
+                if (window.bootstrap && modalEl) {
+                    bsModal = new bootstrap.Modal(modalEl, { keyboard: true });
                 }
                 document.addEventListener('click', function(e){
                     const target = e.target;
                     if (target instanceof HTMLElement && target.matches('img[data-preview]')){
                         e.preventDefault();
                         const src = target.getAttribute('data-src') || target.getAttribute('src');
-                        if (src) openModal(src);
-                    }
-                    if (target instanceof HTMLElement && target.closest('[data-modal-close]')){
-                        closeModal();
-                    }
-                });
-                document.addEventListener('keydown', function(e){
-                    if (e.key === 'Escape' && !modal.classList.contains('hidden')){
-                        closeModal();
+                        if (src && modalImg && bsModal){
+                            modalImg.src = src;
+                            bsModal.show();
+                        }
                     }
                 });
             })();
