@@ -60,18 +60,10 @@ class TicketController extends Controller
         abort_unless(Auth::user() && Auth::user()->is_admin, 403);
         $ticket->load('media');
         foreach ($ticket->media as $m) {
-            if (Storage::disk('public')->exists($m->path)) {
-                Storage::disk('public')->delete($m->path);
-            }
-            $pub = public_path($m->path);
-            if (is_file($pub)) @unlink($pub);
+            Storage::disk('public')->delete($m->path);
         }
         if ($ticket->image_path) {
-            if (Storage::disk('public')->exists($ticket->image_path)) {
-                Storage::disk('public')->delete($ticket->image_path);
-            }
-            $pub = public_path($ticket->image_path);
-            if (is_file($pub)) @unlink($pub);
+            Storage::disk('public')->delete($ticket->image_path);
         }
         $ticket->delete();
         return redirect()->route('admin.tickets.index')->with('status','Ticket eliminado');

@@ -53,7 +53,7 @@
                                         <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Creado por {{ $ticket->creator->name }} — {{ $ticket->created_at->diffForHumans() }}</div>
                                     </div>
                                     @if($ticket->image_path)
-                                        <img src="{{ asset(str_starts_with($ticket->image_path,'tickets/') ? $ticket->image_path : 'storage/'.$ticket->image_path) }}" alt="img" class="w-14 h-14 object-cover rounded border"/>
+                                        <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="img" class="w-14 h-14 object-cover rounded border"/>
                                     @endif
                                 </div>
                             </a>
@@ -88,7 +88,7 @@
                                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Creado por {{ $ticket->creator->name }} @if($ticket->assignee) — Asignado a {{ $ticket->assignee->name }} @endif — {{ $ticket->created_at->diffForHumans() }}</div>
                                 </div>
                                 @if($ticket->image_path)
-                                    <img src="{{ asset(str_starts_with($ticket->image_path,'tickets/') ? $ticket->image_path : 'storage/'.$ticket->image_path) }}" alt="img" class="w-14 h-14 object-cover rounded border"/>
+                                    <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="img" class="w-14 h-14 object-cover rounded border"/>
                                 @endif
                             </div>
                         </a>
