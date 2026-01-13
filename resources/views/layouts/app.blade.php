@@ -15,12 +15,12 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white shadow">
+                <header class="bg-white dark:bg-gray-800 dark:text-gray-100 shadow">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
@@ -32,5 +32,24 @@
                 {{ $slot }}
             </main>
         </div>
+        <script>
+            (function(){
+                const pref = localStorage.getItem('theme');
+                if (pref === 'dark' || (!pref && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                }
+                window.toggleTheme = function(){
+                    const isDark = document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                }
+                window.goBackOr = function(url){
+                    if (document.referrer && document.referrer !== window.location.href) {
+                        history.back();
+                    } else {
+                        window.location.href = url;
+                    }
+                }
+            })();
+        </script>
     </body>
 </html>

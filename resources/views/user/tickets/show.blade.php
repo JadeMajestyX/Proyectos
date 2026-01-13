@@ -7,7 +7,7 @@
 
     <div class="py-8">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white p-6 shadow sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 dark:text-gray-100 p-6 shadow sm:rounded-lg">
                 <div class="flex items-start justify-between">
                     <div>
                         <div class="text-sm text-gray-500">Proyecto: <span class="font-medium text-gray-700">{{ $ticket->project->name }}</span></div>
@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="mt-6">
-                    <x-secondary-button as="a" href="{{ route('user.projects.show', $ticket->project) }}">Volver al proyecto</x-secondary-button>
+                    <a href="{{ route('user.projects.show', $ticket->project) }}" onclick="event.preventDefault(); goBackOr(this.href)" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-100 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">Volver</a>
                 </div>
             </div>
         </div>

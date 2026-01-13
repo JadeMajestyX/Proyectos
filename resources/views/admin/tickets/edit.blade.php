@@ -7,7 +7,7 @@
 
     <div class="py-8">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white p-6 shadow sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 dark:text-gray-100 p-6 shadow sm:rounded-lg">
                 <div class="mb-4">
                     <div class="font-semibold">{{ $ticket->title }}</div>
                     <div class="text-sm text-gray-600">Proyecto: {{ $ticket->project->name }} | Creador: {{ $ticket->creator->name }}</div>
@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="mt-6 flex justify-end">
-                        <x-secondary-button as="a" href="{{ route('admin.tickets.index') }}">Cancelar</x-secondary-button>
+                        <a href="{{ route('admin.tickets.index') }}" onclick="event.preventDefault(); goBackOr(this.href)" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-100 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">Cancelar</a>
                         <x-primary-button class="ms-3">Guardar</x-primary-button>
                     </div>
                 </form>
