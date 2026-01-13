@@ -32,6 +32,16 @@
                 {{ $slot }}
             </main>
         </div>
+        <!-- Image Preview Modal -->
+        <div id="imageModal" class="fixed inset-0 z-50 hidden">
+            <div class="absolute inset-0 bg-black/80" data-modal-close></div>
+            <div class="relative w-full h-full flex items-center justify-center p-4">
+                <img id="imageModalImg" src="" alt="preview" class="max-h-[90vh] max-w-[95vw] rounded shadow-lg" />
+                <button type="button" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-2" title="Cerrar" data-modal-close>
+                    ✕
+                </button>
+            </div>
+        </div>
         <script>
             (function(){
                 const pref = localStorage.getItem('theme');
@@ -51,6 +61,36 @@
                         window.location.href = url;
                     }
                 }
+
+                // Simple Image Preview Modal
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('imageModalImg');
+                function openModal(src){
+                    modalImg.src = src;
+                    modal.classList.remove('hidden');
+                    document.body.classList.add('overflow-hidden');
+                }
+                function closeModal(){
+                    modal.classList.add('hidden');
+                    modalImg.src = '';
+                    document.body.classList.remove('overflow-hidden');
+                }
+                document.addEventListener('click', function(e){
+                    const target = e.target;
+                    if (target instanceof HTMLElement && target.matches('img[data-preview]')){
+                        e.preventDefault();
+                        const src = target.getAttribute('data-src') || target.getAttribute('src');
+                        if (src) openModal(src);
+                    }
+                    if (target instanceof HTMLElement && target.closest('[data-modal-close]')){
+                        closeModal();
+                    }
+                });
+                document.addEventListener('keydown', function(e){
+                    if (e.key === 'Escape' && !modal.classList.contains('hidden')){
+                        closeModal();
+                    }
+                });
             })();
         </script>
     </body>

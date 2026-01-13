@@ -35,9 +35,9 @@
                         @foreach($ticket->media as $m)
                             <div class="border rounded p-2">
                                 @if($m->type==='image')
-                                    <img src="{{ asset('storage/'.$m->path) }}" alt="media" class="w-full max-h-80 object-contain rounded cursor-zoom-in js-open-media" data-type="image" data-src="{{ asset('storage/'.$m->path) }}" />
+                                    <img src="{{ asset('storage/'.$m->path) }}" alt="media" class="w-full max-h-80 object-contain rounded cursor-zoom-in" data-preview />
                                 @else
-                                    <video src="{{ asset('storage/'.$m->path) }}" controls class="w-full max-h-80 rounded cursor-zoom-in js-open-media" data-type="video" data-src="{{ asset('storage/'.$m->path) }}"></video>
+                                    <video src="{{ asset('storage/'.$m->path) }}" controls class="w-full max-h-80 rounded"></video>
                                 @endif
                                 <div class="mt-1 text-xs text-gray-500 truncate">{{ $m->original_name }}</div>
                             </div>
@@ -45,7 +45,7 @@
                     </div>
                 @elseif($ticket->image_path)
                     <div class="mt-6">
-                        <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="Imagen del ticket" class="w-full max-h-[480px] object-contain rounded border cursor-zoom-in js-open-media" data-type="image" data-src="{{ asset('storage/'.$ticket->image_path) }}" />
+                        <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="Imagen del ticket" class="w-full max-h-[480px] object-contain rounded border cursor-zoom-in" data-preview />
                     </div>
                 @endif
 
@@ -72,60 +72,4 @@
             </div>
         </div>
     </div>
-
-    {{-- Modal de medios (imagen/video) --}}
-    <div id="media-modal" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/80"></div>
-        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
-            <div class="relative max-w-5xl w-full">
-                <button type="button" id="media-modal-close" aria-label="Cerrar"
-                        class="absolute -top-3 -right-3 bg-white text-gray-800 rounded-full w-8 h-8 shadow flex items-center justify-center hover:bg-gray-100">×</button>
-                <img id="media-modal-img" src="" alt="media" class="w-full h-auto max-h-[80vh] rounded hidden" />
-                <video id="media-modal-video" src="" controls class="w-full max-h-[80vh] rounded hidden"></video>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        (function(){
-            const modal = document.getElementById('media-modal');
-            const img = document.getElementById('media-modal-img');
-            const video = document.getElementById('media-modal-video');
-            const closeBtn = document.getElementById('media-modal-close');
-            function openModal(type, src){
-                img.classList.add('hidden');
-                video.classList.add('hidden');
-                if(type === 'image'){
-                    img.src = src;
-                    img.classList.remove('hidden');
-                } else {
-                    video.src = src;
-                    video.classList.remove('hidden');
-                    try { video.play(); } catch(e) {}
-                }
-                modal.classList.remove('hidden');
-                document.addEventListener('keydown', onKey);
-            }
-            function closeModal(){
-                if(!modal.classList.contains('hidden')){
-                    video.pause && video.pause();
-                    modal.classList.add('hidden');
-                    img.src = '';
-                    video.src = '';
-                    document.removeEventListener('keydown', onKey);
-                }
-            }
-            function onKey(e){ if(e.key === 'Escape'){ closeModal(); } }
-            document.addEventListener('click', function(e){
-                const t = e.target.closest('.js-open-media');
-                if(t){
-                    e.preventDefault();
-                    openModal(t.dataset.type, t.dataset.src);
-                }
-            });
-            modal?.addEventListener('click', function(e){
-                if(e.target === modal || e.target === closeBtn){ closeModal(); }
-            });
-        })();
-    </script>
 </x-app-layout>

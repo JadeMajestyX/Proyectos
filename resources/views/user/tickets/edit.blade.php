@@ -62,7 +62,7 @@
                                 @foreach($ticket->media as $m)
                                     <div class="border rounded p-2">
                                         @if($m->type==='image')
-                                            <img src="{{ asset('storage/'.$m->path) }}" alt="media" class="w-full h-40 object-cover rounded" />
+                                            <img src="{{ asset('storage/'.$m->path) }}" alt="media" class="w-full h-40 object-cover rounded cursor-zoom-in" data-preview />
                                         @else
                                             <video src="{{ asset('storage/'.$m->path) }}" controls class="w-full h-40 rounded"></video>
                                         @endif
@@ -71,7 +71,7 @@
                                 @endforeach
                                 @if($ticket->image_path)
                                     <div class="border rounded p-2">
-                                        <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="imagen" class="w-full h-40 object-cover rounded" />
+                                        <img src="{{ asset('storage/'.$ticket->image_path) }}" alt="imagen" class="w-full h-40 object-cover rounded cursor-zoom-in" data-preview />
                                         <div class="mt-1 text-xs text-gray-500 truncate">Imagen legacy</div>
                                     </div>
                                 @endif
