@@ -216,7 +216,7 @@
             </div>
 
             <p class="message">
-                Te informamos que el estado del ticket que tienes asignado ha sido actualizado. El ticket cambió de <strong>{{ $oldStatus }}</strong> a <strong>{{ $this->getStatusLabel($ticket->status) }}</strong>. A continuación encontrarás los detalles:
+                Te informamos que el estado del ticket que tienes asignado ha sido actualizado. El ticket cambió de <strong>{{ ucfirst(str_replace('_', ' ', $oldStatus)) }}</strong> a <strong>{{ ucfirst(str_replace('_', ' ', $ticket->status)) }}</strong>. A continuación encontrarás los detalles:
             </p>
 
             <!-- Status Change -->
