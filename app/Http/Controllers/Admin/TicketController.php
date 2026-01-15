@@ -49,7 +49,7 @@ class TicketController extends Controller
 
 
         $userNew = $request->assigned_to;
-        $oldUser = $ticket->assgned_to;
+        $oldUser = $ticket->assigned_to;
 
         
         $ticket->update($validated);
