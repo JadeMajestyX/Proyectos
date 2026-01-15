@@ -12,14 +12,14 @@ use Illuminate\Queue\SerializesModels;
 class CambioActividad extends Mailable
 {
     use Queueable, SerializesModels;
-    public $nombre;
+    public $user;
     public $ticket;
-    public $nuevo;
-    public function __construct($nombre, $ticket, $nuevo)
+    public $newUser;
+    public function __construct($user, $ticket, $newUser)
     {
-        $this->nombre = $nombre;
+        $this->user = $user;
         $this->ticket = $ticket;
-        $this->nuevo = $nuevo;
+        $this->newUser = $newUser;
     }
 
     /**
