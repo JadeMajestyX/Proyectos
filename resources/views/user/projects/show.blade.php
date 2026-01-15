@@ -29,7 +29,7 @@
                     <h4 class="text-sm font-semibold text-gray-800 mb-2">Mis tickets asignados</h4>
                     <div class="divide-y divide-gray-200 dark:divide-gray-700 mb-6">
                         @foreach($myAssigned as $ticket)
-                            <a href="{{ route('user.projects.tickets.show', [$project, $ticket]) }}" class="block py-3 pl-3 border-l-4 hover:bg-gray-50 dark:hover:bg-gray-700 rounded" @class([
+                            <a href="{{ route('user.projects.tickets.show', [$project, $ticket]) }}" class="block py-3 pl-3 border-l-4 hover:bg-gray-50 dark:hover:bg-gray-700 rounded border-red-500 border-amber-500 border-green-500" @class([
                                 'border-red-500' => $ticket->priority==='high',
                                 'border-amber-500' => $ticket->priority==='medium',
                                 'border-green-500' => $ticket->priority==='low',
@@ -37,7 +37,7 @@
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <div class="font-medium">{{ $ticket->title }}
-                                            <span class="ml-2 text-xs px-2 py-0.5 rounded-full"
+                                            <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 bg-amber-100 text-amber-700 bg-green-100 text-green-700"
                                                   @class([
                                                     'bg-red-100 text-red-700' => $ticket->priority==='high',
                                                     'bg-amber-100 text-amber-700' => $ticket->priority==='medium',
@@ -64,7 +64,7 @@
                 <h4 class="text-sm font-semibold text-gray-800 mb-2">Todos los tickets</h4>
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($tickets as $ticket)
-                        <a href="{{ route('user.projects.tickets.show', [$project, $ticket]) }}" class="block py-3 pl-3 border-l-4 hover:bg-gray-50 dark:hover:bg-gray-700 rounded" @class([
+                        <a href="{{ route('user.projects.tickets.show', [$project, $ticket]) }}" class="block py-3 pl-3 border-l-4 hover:bg-gray-50 dark:hover:bg-gray-700 rounded border-red-500 border-amber-500 border-green-500" @class([
                             'border-red-500' => $ticket->priority==='high',
                             'border-amber-500' => $ticket->priority==='medium',
                             'border-green-500' => $ticket->priority==='low',
@@ -72,7 +72,7 @@
                             <div class="flex justify-between items-center">
                                 <div>
                                     <div class="font-medium">{{ $ticket->title }}
-                                        <span class="ml-2 text-xs px-2 py-0.5 rounded-full"
+                                        <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 bg-amber-100 text-amber-700 bg-green-100 text-green-700"
                                               @class([
                                                 'bg-red-100 text-red-700' => $ticket->priority==='high',
                                                 'bg-amber-100 text-amber-700' => $ticket->priority==='medium',
