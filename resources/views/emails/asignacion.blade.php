@@ -187,7 +187,7 @@
             </p>
 
             <center>
-                <a href="{{ route('tickets.show', $ticket->project_id, $ticket->id) }}" class="cta-button">
+                <a href="{{ route('user.projects.tickets.show', $ticket->project_id, $ticket->id) }}" class="cta-button">
                     Ver Ticket Completo
                 </a>
             </center>
