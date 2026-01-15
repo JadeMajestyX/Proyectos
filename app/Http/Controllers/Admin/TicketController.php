@@ -45,20 +45,20 @@ class TicketController extends Controller
             'category' => ['required','in:bug,actualizacion,novedad,mejora,otro']
         ]);
 
-
-
-        $ticket->update($validated);
-
         if($request->assigned_to){
             if($ticket->assigned_to != $request->assigned_to){
                 $user = User::findOrFail($request->assigned_to);
                 Mail::to($user->email)
                 ->send(new AsignarActividad(
                     $user,
-                    $ticket
+                    $request
                 ));
             }
         }
+
+        $ticket->update($validated);
+
+
 
         return redirect()->route('admin.tickets.index')->with('status','Ticket actualizado');
     }
