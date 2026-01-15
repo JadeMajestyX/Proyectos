@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\AsignarActividad;
 use App\Mail\CambioActividad;
+use App\Mail\CambioStatusActividad;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
@@ -48,15 +49,20 @@ class TicketController extends Controller
         ]);
 
 
-        $userNew = $request->assigned_to;
         $oldUser = $ticket->assigned_to;
+        $statusOld = $ticket->status;
 
         
         $ticket->update($validated);
+
+        $userNew = $ticket->assigned_to;
+        $statusNew = $ticket->status;
         
+        //Fuera del if para usarse en 2 casos y evitar doble consulta a la base de datos
+        $user = User::findOrFail($userNew);
+        $ticket->load('project');
+
         if($userNew && $oldUser != $userNew){
-                $user = User::findOrFail($userNew);
-                $ticket->load('project');
                 Mail::to($user->email)
                 ->send(new AsignarActividad(
                     $user,
@@ -72,6 +78,14 @@ class TicketController extends Controller
                     ));
                 }
             
+        }
+        if($statusNew != $statusOld){
+            Mail::to($user->email)
+            ->send(new CambioStatusActividad(
+                $user,
+                $ticket,
+                $statusOld
+            ));
         }
         
 
