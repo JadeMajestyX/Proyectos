@@ -48,7 +48,7 @@ class TicketController extends Controller
         if(!$request->assigned_to){
             return;
         }else{
-            if($ticket->assgned_to =! $request->assigned_to){
+            if($ticket->assigned_to =! $request->assigned_to){
                 $user = User::findOrFail($request->assigned_to);
                 Mail::to($user->email)
                 ->send(new AsignarActividad(
