@@ -19,19 +19,13 @@
                 </div>
                 <div class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($tickets as $ticket)
-                        <div class="py-3 pl-3 border-l-4" @class([
-                            'border-red-500' => $ticket->priority==='high',
-                            'border-amber-500' => $ticket->priority==='medium',
-                            'border-green-500' => $ticket->priority==='low',
-                        ])>
+                        <div class="py-3 pl-3 border-l-4" style="@if($ticket->priority==='high') border-color: rgb(239, 68, 68); @elseif($ticket->priority==='medium') border-color: rgb(217, 119, 6); @else border-color: rgb(34, 197, 94); @endif">
                             <div class="flex justify-between">
                                 <div>
                                     <div class="font-semibold">{{ $ticket->title }}
-                                        <span class="ml-2 text-xs px-2 py-0.5 rounded-full" @class([
-                                            'bg-red-100 text-red-700' => $ticket->priority==='high',
-                                            'bg-amber-100 text-amber-700' => $ticket->priority==='medium',
-        									'bg-green-100 text-green-700' => $ticket->priority==='low',
-                                        ])>{{ ucfirst($ticket->priority) }}</span>
+                                        <span class="ml-2 text-xs px-2 py-0.5 rounded-full"
+                                              style="@if($ticket->priority==='high') background-color: rgb(254, 226, 226); color: rgb(220, 38, 38); @elseif($ticket->priority==='medium') background-color: rgb(254, 243, 224); color: rgb(180, 83, 9); @else background-color: rgb(220, 252, 231); color: rgb(22, 163, 74); @endif">
+                                            {{ ucfirst($ticket->priority) }}</span>
                                         @if($ticket->category)
                                             <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">{{ ucfirst($ticket->category) }}</span>
                                         @endif
