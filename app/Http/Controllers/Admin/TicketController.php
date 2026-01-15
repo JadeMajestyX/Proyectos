@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\AsignarActividad;
+use App\Mail\CambioActividad;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
@@ -54,6 +55,15 @@ class TicketController extends Controller
                     $user,
                     $ticket
                 ));
+                if($ticket->assigned_to){
+                    $oldUser = User::findOrFail($ticket->assigned_to);
+                    Mail::to($oldUser->email)
+                    ->send(new CambioActividad(
+                        $oldUser,
+                        $ticket,
+                        $user
+                    ));
+                }
             
         }
 
