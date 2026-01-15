@@ -47,29 +47,33 @@ class TicketController extends Controller
             'category' => ['required','in:bug,actualizacion,novedad,mejora,otro']
         ]);
 
-        if($request->assigned_to && $ticket->assigned_to != $request->assigned_to){
-                $user = User::findOrFail($request->assigned_to);
+
+        $userNew = $request->assigned_to;
+        $oldUser = $ticket->assgned_to;
+
+        
+        $ticket->update($validated);
+        
+        if($userNew && $oldUser != $userNew){
+                $user = User::findOrFail($userNew);
                 $ticket->load('project');
                 Mail::to($user->email)
                 ->send(new AsignarActividad(
                     $user,
                     $ticket
                 ));
-                if($ticket->assigned_to){
-                    $oldUser = User::findOrFail($ticket->assigned_to);
-                    Mail::to($oldUser->email)
+                if($oldUser){
+                    $oldUserData = User::findOrFail($oldUser);
+                    Mail::to($oldUserData->email)
                     ->send(new CambioActividad(
-                        $oldUser,
+                        $oldUserData,
                         $ticket,
                         $user
                     ));
                 }
             
         }
-
-        $ticket->update($validated);
-
-
+        
 
         return redirect()->route('admin.tickets.index')->with('status','Ticket actualizado');
     }
