@@ -202,7 +202,6 @@
             <p>© {{ now()->year }} {{ config('app.name') }} - Sistema de Gestión de Tickets</p>
             <p style="margin-top: 10px;">
                 <a href="{{ route('dashboard') }}">Panel de Control</a> | 
-                <a href="{{ route('profile.show') }}">Mi Perfil</a>
             </p>
         </div>
     </div>
