@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\AsignarActividad;
+use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -45,15 +46,15 @@ class TicketController extends Controller
             'category' => ['required','in:bug,actualizacion,novedad,mejora,otro']
         ]);
 
-        if($request->assigned_to){
-            if($ticket->assigned_to != $request->assigned_to){
+        if($request->assigned_to && $ticket->assigned_to != $request->assigned_to){
                 $user = User::findOrFail($request->assigned_to);
+                $ticket->load('project');
                 Mail::to($user->email)
                 ->send(new AsignarActividad(
                     $user,
-                    $request
+                    $ticket
                 ));
-            }
+            
         }
 
         $ticket->update($validated);
