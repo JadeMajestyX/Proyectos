@@ -13,12 +13,12 @@ class AsignarActividad extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $nombre;
+    public $user;
     public $ticket;
 
-    public function __construct($nombre, $ticket)
+    public function __construct($user, $ticket)
     {
-        $this->nombre = $nombre;
+        $this->user = $user;
         $this->ticket = $ticket;
     }
 
