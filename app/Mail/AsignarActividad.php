@@ -13,12 +13,13 @@ class AsignarActividad extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct()
+    public $nombre;
+    public $ticket;
+
+    public function __construct($nombre, $ticket)
     {
-        //
+        $this->nombre = $nombre;
+        $this->ticket = $ticket;
     }
 
     /**
@@ -27,7 +28,7 @@ class AsignarActividad extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Asignar Actividad',
+            subject: 'Actividad asignada',
         );
     }
 
@@ -37,7 +38,7 @@ class AsignarActividad extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.asignacion',
         );
     }
 

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AsignarActividad;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class TicketController extends Controller
@@ -42,6 +44,20 @@ class TicketController extends Controller
             'priority' => ['required','in:low,medium,high'],
             'category' => ['required','in:bug,actualizacion,novedad,mejora,otro']
         ]);
+
+        if(!$request->assigned_to){
+            return;
+        }else{
+            if($ticket->assgned_to =! $request->assigned_to){
+                $user = User::findOrFail($request->assigned_to);
+                Mail::to($user->email)
+                ->send(new AsignarActividad(
+                    $user,
+                    $request
+                ));
+            }
+
+        }
 
         $ticket->update($validated);
 
