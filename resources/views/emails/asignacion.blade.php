@@ -136,7 +136,7 @@
         <!-- Content -->
         <div class="content">
             <div class="greeting">
-                Hola <strong>{{ $user->name }}</strong>,
+                Hola <strong>{{ $user->nombre }}</strong>,
             </div>
 
             <p class="message">
