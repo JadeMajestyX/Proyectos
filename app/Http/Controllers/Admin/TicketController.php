@@ -45,7 +45,7 @@ class TicketController extends Controller
             'category' => ['required','in:bug,actualizacion,novedad,mejora,otro']
         ]);
 
-        if($request->assigned_to){{
+        if($request->assigned_to){
             if($ticket->assigned_to =! $request->assigned_to){
                 $user = User::findOrFail($request->assigned_to);
                 Mail::to($user->email)
