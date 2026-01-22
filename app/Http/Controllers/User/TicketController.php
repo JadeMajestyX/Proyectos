@@ -151,12 +151,25 @@ class TicketController extends Controller
         abort_unless($ticket->project_id === $project->id, 404);
         abort_unless($ticket->assigned_to && $ticket->assigned_to === Auth::id(), 403);
 
+        // Una vez completado, ya no se puede volver a cambiar
+        abort_if($ticket->status === 'done', 403);
+
         $validated = $request->validate([
             'status' => ['required', 'in:in_progress,done'],
         ]);
 
         $oldStatus = $ticket->status;
         $newStatus = $validated['status'];
+
+        // Transiciones permitidas:
+        // - open -> in_progress
+        // - open/in_progress -> done
+        if ($newStatus === 'in_progress' && $oldStatus !== 'open') {
+            abort(403);
+        }
+        if ($newStatus === 'done' && !in_array($oldStatus, ['open', 'in_progress'], true)) {
+            abort(403);
+        }
 
         if ($oldStatus !== $newStatus) {
             $ticket->update([

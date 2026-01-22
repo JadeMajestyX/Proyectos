@@ -18,6 +18,7 @@ Route::get('/dashboard', function () {
 
     $assigned = Ticket::with(['project','creator','assignee'])
         ->where('assigned_to', $user->id)
+        ->where('status', '!=', 'done')
         ->orderByRaw("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END")
         ->orderByDesc('created_at')
         ->limit(10)
@@ -25,6 +26,7 @@ Route::get('/dashboard', function () {
 
     $created = Ticket::with(['project','creator','assignee'])
         ->where('created_by', $user->id)
+        ->where('status', '!=', 'done')
         ->orderByRaw("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END")
         ->orderByDesc('created_at')
         ->limit(10)
@@ -56,6 +58,7 @@ Route::middleware(['auth'])->prefix('projects')->name('user.projects.')->group(f
     // Tickets del usuario por proyecto
     Route::get('/{project}/tickets/create', [UserTicketController::class, 'create'])->name('tickets.create');
     Route::post('/{project}/tickets', [UserTicketController::class, 'store'])->name('tickets.store');
+    Route::get('/{project}/tickets/past', [UserProjectController::class, 'pastTickets'])->name('tickets.past');
     Route::get('/{project}/tickets/{ticket}', [UserTicketController::class, 'show'])->name('tickets.show');
     Route::get('/{project}/tickets/{ticket}/edit', [UserTicketController::class, 'edit'])->name('tickets.edit');
     Route::patch('/{project}/tickets/{ticket}', [UserTicketController::class, 'update'])->name('tickets.update');

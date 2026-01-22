@@ -15,8 +15,18 @@
             <div class="bg-white dark:bg-gray-800 dark:text-gray-100 p-6 shadow sm:rounded-lg">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold">Tickets</h3>
-                    <a href="{{ route('user.projects.tickets.create', $project) }}" class="inline-flex items-center px-3 py-2 bg-indigo-600 text-white rounded-md text-sm">Nuevo Ticket</a>
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('user.projects.tickets.past', $project) }}" class="inline-flex items-center px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm">
+                            Tickets pasados
+                            @if(isset($pastCount) && $pastCount)
+                                <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{{ $pastCount }}</span>
+                            @endif
+                        </a>
+                        <a href="{{ route('user.projects.tickets.create', $project) }}" class="inline-flex items-center px-3 py-2 bg-indigo-600 text-white rounded-md text-sm">Nuevo Ticket</a>
+                    </div>
                 </div>
+
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Los tickets completados no aparecen aquí; se muestran en “Tickets pasados”.</p>
 
                 {{-- Leyenda de prioridades --}}
                 <div class="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-300 mb-4">

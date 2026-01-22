@@ -30,16 +30,40 @@ class ProjectController extends Controller
 
         $tickets = $project->tickets()
             ->with(['creator','assignee'])
+            ->where('status', '!=', 'done')
             ->orderByRaw("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END")
             ->orderByDesc('created_at')
             ->get();
 
         $myAssigned = $tickets->where('assigned_to', auth()->id());
 
+        $pastCount = $project->tickets()
+            ->where('status', 'done')
+            ->count();
+
         return view('user.projects.show', [
             'project' => $project,
             'tickets' => $tickets,
             'myAssigned' => $myAssigned,
+            'pastCount' => $pastCount,
+        ]);
+    }
+
+    public function pastTickets(Project $project)
+    {
+        abort_unless($project->owner && $project->owner->is_admin, 404);
+        $project->load(['owner']);
+
+        $tickets = $project->tickets()
+            ->with(['creator', 'assignee'])
+            ->where('status', 'done')
+            ->orderByDesc('updated_at')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('user.tickets.past', [
+            'project' => $project,
+            'tickets' => $tickets,
         ]);
     }
 }

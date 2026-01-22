@@ -91,3 +91,39 @@ it('impide a un usuario no asignado cambiar el estado', function () {
 
     expect($ticket->fresh()->status)->toBe('open');
 });
+
+it('impide cambiar el estado si ya está completado', function () {
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+
+    $assignee = User::factory()->create([
+        'is_admin' => false,
+    ]);
+
+    $project = Project::create([
+        'name' => 'Proyecto demo',
+        'description' => 'Desc',
+        'created_by' => $admin->id,
+    ]);
+
+    $ticket = Ticket::create([
+        'project_id' => $project->id,
+        'created_by' => $assignee->id,
+        'assigned_to' => $assignee->id,
+        'title' => 'Ticket demo',
+        'description' => null,
+        'status' => 'done',
+        'category' => 'bug',
+        'priority' => 'low',
+        'image_path' => null,
+    ]);
+
+    $this->actingAs($assignee)
+        ->patch(route('user.projects.tickets.status', [$project, $ticket]), [
+            'status' => 'in_progress',
+        ])
+        ->assertStatus(403);
+
+    expect($ticket->fresh()->status)->toBe('done');
+});
