@@ -59,6 +59,7 @@ Route::middleware(['auth'])->prefix('projects')->name('user.projects.')->group(f
     Route::get('/{project}/tickets/{ticket}', [UserTicketController::class, 'show'])->name('tickets.show');
     Route::get('/{project}/tickets/{ticket}/edit', [UserTicketController::class, 'edit'])->name('tickets.edit');
     Route::patch('/{project}/tickets/{ticket}', [UserTicketController::class, 'update'])->name('tickets.update');
+    Route::patch('/{project}/tickets/{ticket}/status', [UserTicketController::class, 'updateStatus'])->name('tickets.status');
     Route::delete('/{project}/tickets/{ticket}', [UserTicketController::class, 'destroy'])->name('tickets.destroy');
 });
 

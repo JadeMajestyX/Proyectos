@@ -62,6 +62,27 @@
 
                 <div class="mt-6 flex gap-2">
                     <a href="{{ route('user.projects.show', $ticket->project) }}" onclick="event.preventDefault(); goBackOr(this.href)" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-100 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">Volver</a>
+
+                    @if(Auth::id() === $ticket->assigned_to)
+                        @if($ticket->status !== 'in_progress' && $ticket->status !== 'done')
+                            <form method="POST" action="{{ route('user.projects.tickets.status', [$ticket->project, $ticket]) }}">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="status" value="in_progress" />
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-amber-600 text-white rounded-md text-xs uppercase tracking-widest">Marcar en progreso</button>
+                            </form>
+                        @endif
+
+                        @if($ticket->status !== 'done')
+                            <form method="POST" action="{{ route('user.projects.tickets.status', [$ticket->project, $ticket]) }}">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="status" value="done" />
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md text-xs uppercase tracking-widest">Marcar como completado</button>
+                            </form>
+                        @endif
+                    @endif
+
                     @if(Auth::id() === $ticket->created_by)
                         <a href="{{ route('user.projects.tickets.edit', [$ticket->project, $ticket]) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md text-xs uppercase tracking-widest">Editar</a>
                         <form method="POST" action="{{ route('user.projects.tickets.destroy', [$ticket->project, $ticket]) }}" onsubmit="return confirm('¿Eliminar este ticket? Esta acción no se puede deshacer.')">

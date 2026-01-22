@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\TicketStatusUpdatedByUser;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\TicketMedia;
@@ -142,5 +143,40 @@ class TicketController extends Controller
         $ticket->delete();
 
         return redirect()->route('user.projects.show', $project)->with('status','Ticket eliminado');
+    }
+
+    public function updateStatus(Request $request, Project $project, Ticket $ticket)
+    {
+        abort_unless($project->owner && $project->owner->is_admin, 404);
+        abort_unless($ticket->project_id === $project->id, 404);
+        abort_unless($ticket->assigned_to && $ticket->assigned_to === Auth::id(), 403);
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:in_progress,done'],
+        ]);
+
+        $oldStatus = $ticket->status;
+        $newStatus = $validated['status'];
+
+        if ($oldStatus !== $newStatus) {
+            $ticket->update([
+                'status' => $newStatus,
+            ]);
+
+            $ticket->load(['project', 'creator', 'assignee']);
+
+            if ($project->owner && $project->owner->is_admin) {
+                $project->owner->notify(new TicketStatusUpdatedByUser(
+                    ticket: $ticket,
+                    changedBy: Auth::user(),
+                    oldStatus: $oldStatus,
+                    newStatus: $newStatus,
+                ));
+            }
+        }
+
+        return redirect()
+            ->route('user.projects.tickets.show', [$project, $ticket])
+            ->with('status', 'Estado del ticket actualizado');
     }
 }
