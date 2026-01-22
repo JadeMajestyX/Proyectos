@@ -35,7 +35,7 @@ class ProjectController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        $myAssigned = $tickets->where('assigned_to', auth()->id());
+        $myAssigned = $tickets->where('assigned_to', Auth::id());
 
         $pastCount = $project->tickets()
             ->where('status', 'done')

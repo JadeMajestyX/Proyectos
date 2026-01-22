@@ -21,14 +21,40 @@ class TicketController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         abort_unless(Auth::user() && Auth::user()->is_admin, 403);
-        $tickets = Ticket::with(['project','creator','assignee'])
+
+        $tab = $request->query('tab', 'open');
+        $allowedTabs = ['unassigned', 'assigned', 'done', 'in_progress', 'open'];
+        if (!in_array($tab, $allowedTabs, true)) {
+            $tab = 'open';
+        }
+
+        $query = Ticket::with(['project', 'creator', 'assignee']);
+
+        if ($tab === 'unassigned') {
+            $query->whereNull('assigned_to');
+        } elseif ($tab === 'assigned') {
+            $query->whereNotNull('assigned_to');
+        } elseif (in_array($tab, ['done', 'in_progress', 'open'], true)) {
+            $query->where('status', $tab);
+        }
+
+        $tickets = $query
             ->orderByRaw("CASE priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END")
             ->orderByDesc('created_at')
             ->paginate(15);
-        return view('admin.tickets.index', compact('tickets'));
+
+        $counts = [
+            'unassigned' => Ticket::whereNull('assigned_to')->count(),
+            'assigned' => Ticket::whereNotNull('assigned_to')->count(),
+            'done' => Ticket::where('status', 'done')->count(),
+            'in_progress' => Ticket::where('status', 'in_progress')->count(),
+            'open' => Ticket::where('status', 'open')->count(),
+        ];
+
+        return view('admin.tickets.index', compact('tickets', 'tab', 'counts'));
     }
 
     public function edit(Ticket $ticket)

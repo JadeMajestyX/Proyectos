@@ -27,19 +27,15 @@ class TicketStatusUpdatedByUser extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $projectName = $this->ticket->project?->name ?? '—';
-        $ticketTitle = $this->ticket->title;
-
         return (new MailMessage)
             ->subject('Ticket actualizado por usuario')
-            ->greeting('Hola')
-            ->line("El usuario {$this->changedBy->name} marcó un ticket.")
-            ->line("Proyecto: {$projectName}")
-            ->line("Ticket: {$ticketTitle}")
-            ->line('Estado anterior: '.$this->humanStatus($this->oldStatus))
-            ->line('Nuevo estado: '.$this->humanStatus($this->newStatus))
-            ->action('Ver ticket (admin)', route('admin.tickets.show', $this->ticket))
-            ->line('Este mensaje se envió automáticamente.');
+            ->view('emails.admin_ticket_status_updated', [
+                'ticket' => $this->ticket,
+                'adminName' => $notifiable->name ?? 'Admin',
+                'changedByName' => $this->changedBy->name,
+                'oldStatusLabel' => $this->humanStatus($this->oldStatus),
+                'newStatusLabel' => $this->humanStatus($this->newStatus),
+            ]);
     }
 
     private function humanStatus(string $status): string

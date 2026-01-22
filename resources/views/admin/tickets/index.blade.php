@@ -11,6 +11,32 @@
                 @if (session('status'))
                     <div class="mb-4 text-sm text-green-700 bg-green-100 p-3 rounded">{{ session('status') }}</div>
                 @endif
+
+                @php
+                    $tab = $tab ?? request()->query('tab', 'open');
+                    $counts = $counts ?? [];
+                    $tabs = [
+                        'unassigned' => 'Sin asignar',
+                        'assigned' => 'Asignados',
+                        'done' => 'Completos',
+                        'in_progress' => 'En progreso',
+                        'open' => 'Abiertos',
+                    ];
+                @endphp
+
+                <div class="flex flex-wrap gap-2 mb-4">
+                    @foreach($tabs as $key => $label)
+                        <a href="{{ route('admin.tickets.index', ['tab' => $key]) }}"
+                           class="inline-flex items-center px-3 py-2 rounded-md text-sm border transition
+                                {{ $tab === $key ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600' }}">
+                            {{ $label }}
+                            <span class="ml-2 text-xs px-2 py-0.5 rounded-full {{ $tab === $key ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-700' }}">
+                                {{ $counts[$key] ?? 0 }}
+                            </span>
+                        </a>
+                    @endforeach
+                </div>
+
                 {{-- Leyenda de prioridades --}}
                 <div class="flex items-center gap-4 text-xs text-gray-600 mb-4">
                     <div class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-red-500"></span> Alta</div>
@@ -52,7 +78,7 @@
                     @endforelse
                 </div>
 
-                <div class="mt-4">{{ $tickets->links() }}</div>
+                <div class="mt-4">{{ $tickets->appends(['tab' => $tab])->links() }}</div>
             </div>
         </div>
     </div>
